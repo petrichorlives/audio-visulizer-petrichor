@@ -8,8 +8,7 @@
   <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#05080c">
-  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1e1d1a">
 
   <style>
     * {
@@ -21,8 +20,8 @@
     }
 
     body {
-      background-color: #020305;
-      color: #79f7ff;
+      background-color: #0d0c0b;
+      color: #dddded;
       font-family: 'Courier New', Courier, monospace;
       display: flex;
       flex-direction: column;
@@ -32,51 +31,66 @@
       overflow: hidden;
     }
 
-    /* Headunit Enclosure Styling */
+    /* Heavy Physical Tech Chassis */
     .headunit-frame {
       position: relative;
       width: 96vw;
-      max-width: 900px;
+      max-width: 920px;
       height: 90vh;
-      max-height: 520px;
-      background: linear-gradient(180deg, #181c22 0%, #0d0f12 100%);
-      border: 4px solid #2a313a;
-      border-radius: 12px;
+      max-height: 540px;
+      background: linear-gradient(180deg, #3f3c37 0%, #21201d 100%);
+      border: 4px solid #9c8562;
+      border-radius: 10px;
       box-shadow: 
-        0 0 0 2px #0a0c0e,
-        0 20px 50px rgba(0, 0, 0, 0.9),
-        inset 0 2px 3px rgba(255, 255, 255, 0.1);
+        0 0 0 3px #181715,
+        0 25px 60px rgba(0, 0, 0, 0.95),
+        inset 0 2px 4px rgba(246, 245, 244, 0.15);
       display: flex;
       flex-direction: column;
-      padding: 16px;
-      gap: 12px;
+      padding: 18px;
+      gap: 14px;
     }
 
-    /* Glass VFD Display Area */
+    /* Screw Heads for Physical Hardware Detail */
+    .headunit-frame::before, .headunit-frame::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #1e1d1a;
+      border: 1px solid #9c8562;
+      border-radius: 50%;
+    }
+    .headunit-frame::before { top: 6px; left: 6px; }
+    .headunit-frame::after { top: 6px; right: 6px; }
+
+    /* Recessed VFD Glass Display Container */
     .vfd-display {
       position: relative;
       flex: 1;
-      background: #04080e;
-      border: 3px solid #141a22;
+      background: #09090b;
+      border: 4px solid #1c1b18;
       border-radius: 6px;
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+      box-shadow: 
+        inset 0 0 25px rgba(0, 0, 0, 0.95),
+        inset 0 2px 8px rgba(0, 0, 0, 0.8);
       display: flex;
       flex-direction: column;
       padding: 12px;
-      gap: 10px;
+      gap: 12px;
       overflow: hidden;
     }
 
-    /* VFD Glass Scanlines Overlay */
+    /* VFD Glass Texture & Phosphor Glow Scanlines */
     .vfd-display::after {
       content: "";
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       background: linear-gradient(
-        rgba(18, 16, 16, 0) 50%, 
-        rgba(0, 0, 0, 0.35) 50%
+        rgba(221, 221, 237, 0) 60%, 
+        rgba(0, 0, 0, 0.4) 40%
       );
-      background-size: 100% 4px;
+      background-size: 100% 3px;
       pointer-events: none;
       z-index: 5;
     }
@@ -91,8 +105,8 @@
     /* 120x36 Dot Matrix Screen */
     .dot-matrix-container {
       flex: 1;
-      background: #020509;
-      border: 1px solid #1a2636;
+      background: #050507;
+      border: 2px solid #23221e;
       border-radius: 4px;
       position: relative;
       overflow: hidden;
@@ -104,13 +118,13 @@
       display: block;
     }
 
-    /* Right Badge & Status Area */
+    /* Right Status Badge Panel */
     .status-badge-container {
       width: 180px;
-      background: #020509;
-      border: 1px solid #1a2636;
+      background: #050507;
+      border: 2px solid #23221e;
       border-radius: 4px;
-      padding: 8px;
+      padding: 8px 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -120,28 +134,28 @@
 
     .brand-title {
       font-weight: bold;
-      color: #79f7ff;
-      text-shadow: 0 0 6px rgba(121, 247, 255, 0.6);
+      color: #f6f5f4;
+      text-shadow: 0 0 8px rgba(198, 197, 227, 0.7);
       text-align: center;
-      border-bottom: 1px solid #1a2636;
+      border-bottom: 1px solid #3f3c37;
       padding-bottom: 4px;
     }
 
     .status-item {
       display: flex;
       justify-content: space-between;
-      color: #3b8296;
+      color: #88aa6e;
     }
 
     .status-item span.val {
-      color: #79f7ff;
+      color: #dddded;
     }
 
     /* Bottom 24-Bar Spectrum Analyzer */
     .spectrum-container {
       flex: 1;
-      background: #020509;
-      border: 1px solid #1a2636;
+      background: #050507;
+      border: 2px solid #23221e;
       border-radius: 4px;
       position: relative;
     }
@@ -157,8 +171,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #090d12;
-      border: 1px solid #18202c;
+      background: #181715;
+      border: 1px solid #3f3c37;
       border-radius: 6px;
       padding: 8px 12px;
       z-index: 10;
@@ -170,9 +184,9 @@
     }
 
     .btn {
-      background: #121822;
-      color: #58a0b0;
-      border: 1px solid #222d3e;
+      background: #252420;
+      color: #88aa6e;
+      border: 1px solid #3f3c37;
       padding: 6px 12px;
       border-radius: 4px;
       font-size: 11px;
@@ -182,17 +196,17 @@
     }
 
     .btn:hover, .btn.active {
-      background: #1c2738;
-      color: #79f7ff;
-      border-color: #3b8296;
-      box-shadow: 0 0 8px rgba(121, 247, 255, 0.3);
+      background: #3f3c37;
+      color: #f6f5f4;
+      border-color: #9c8562;
+      box-shadow: 0 0 8px rgba(156, 133, 98, 0.4);
     }
 
     /* Start Overlay */
     #startOverlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(4, 8, 14, 0.92);
+      background: rgba(9, 9, 11, 0.94);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -202,19 +216,20 @@
     }
 
     .start-msg {
-      border: 2px solid #79f7ff;
-      color: #79f7ff;
+      border: 2px solid #9c8562;
+      color: #f6f5f4;
+      background: #1e1d1a;
       padding: 16px 28px;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 13px;
       letter-spacing: 2px;
-      text-shadow: 0 0 10px rgba(121, 247, 255, 0.8);
-      box-shadow: 0 0 15px rgba(121, 247, 255, 0.3);
-      animation: pulse 1.5s infinite alternate;
+      text-shadow: 0 0 8px rgba(246, 245, 244, 0.6);
+      box-shadow: 0 0 20px rgba(156, 133, 98, 0.3);
+      animation: pulse 1.8s infinite alternate;
     }
 
     @keyframes pulse {
-      from { opacity: 0.7; transform: scale(0.98); }
+      from { opacity: 0.75; transform: scale(0.98); }
       to { opacity: 1; transform: scale(1.02); }
     }
   </style>
@@ -233,7 +248,7 @@
         <div class="status-badge-container">
           <div class="brand-title">PIONEER OEL</div>
           <div class="status-item"><span>DSP:</span> <span class="val">STUDIO</span></div>
-          <div class="status-item"><span>MODE:</span> <span class="val">DRIVE</span></div>
+          <div class="status-item"><span>MODE:</span> <span class="val">IBM POST</span></div>
           <div class="status-item"><span>PEAK:</span> <span class="val" id="peakVal">+3dB</span></div>
           <div class="status-item"><span>DISP:</span> <span class="val">SPECTRUM</span></div>
         </div>
@@ -253,9 +268,7 @@
     <!-- Controls -->
     <div class="controls-bar">
       <div class="btn-group">
-        <button class="btn active" id="colorCyan">CYAN / GREEN</button>
-        <button class="btn" id="colorAmber">AMBER VFD</button>
-        <button class="btn" id="colorViolet">VIOLET NIGHT</button>
+        <button class="btn active" id="colorPalette">PALETTE: PALETTE VFD</button>
       </div>
       <div class="btn-group">
         <button class="btn" id="gainLow">GAIN: LOW</button>
@@ -266,43 +279,23 @@
   </div>
 
   <script>
-    // --- Configuration & Constants ---
     const NUM_BARS = 24;
     let micGain = 1.8;
     
-    // Color Themes
-    const COLOR_THEMES = {
-      cyan: {
-        primary: '#79f7ff',
-        secondary: '#2ba8b8',
-        peak: '#ffffff',
-        dim: '#0a2028',
-        gradientTop: '#ff3366',
-        gradientMid: '#ffee33',
-        gradientBot: '#33ff88'
-      },
-      amber: {
-        primary: '#ffaa00',
-        secondary: '#b87000',
-        peak: '#ffffff',
-        dim: '#281800',
-        gradientTop: '#ff2200',
-        gradientMid: '#ff9900',
-        gradientBot: '#ffcc00'
-      },
-      violet: {
-        primary: '#cf79ff',
-        secondary: '#822ba8',
-        peak: '#ffffff',
-        dim: '#200a28',
-        gradientTop: '#ff33bb',
-        gradientMid: '#aa33ff',
-        gradientBot: '#33aaff'
-      }
+    // User Provided Custom Palette
+    const PALETTE = {
+      c3F3C37: '#3F3C37', // Dark Grey Chassis
+      c5E8054: '#5E8054', // Forest Green
+      c514088: '#514088', // Deep Purple
+      c654FA7: '#654FA7', // Bright Purple
+      c9C8562: '#9C8562', // Tan Metallic Accent
+      c88AA6E: '#88AA6E', // Sage Green
+      c97C27E: '#97C27E', // Light Green
+      cC6C5E3: '#C6C5E3', // Soft Lavender
+      cDDDDED: '#DDDDED', // Ice White
+      cF6F5F4: '#F6F5F4'  // Peak Bright White
     };
-    let currentTheme = COLOR_THEMES.cyan;
 
-    // --- State & Canvas Elements ---
     const dotCanvas = document.getElementById('dotMatrixCanvas');
     const dotCtx = dotCanvas.getContext('2d');
     const specCanvas = document.getElementById('spectrumCanvas');
@@ -315,27 +308,28 @@
     let barPeaks = new Float32Array(NUM_BARS);
     let barVelocities = new Float32Array(NUM_BARS);
 
-    // --- Sequence State Engine ---
-    // 0: WELCOME, 1: PIONEER SHIELD, 2: SKULL, 3: CITY DRIVING (PERMANENT)
+    // Sequence States: 0: IBM BOOT, 1: PIONEER SHIELD, 2: SKULL, 3: CHILL DRIVE (PERMANENT)
     let seqState = 0;
     let seqFrame = 0;
     let driveX = 0;
 
-    // --- Bitmaps (Custom 5x7 Font & Pixel Art) ---
+    // Bitmap Font (5x7)
     const FONT_5X7 = {
-      'W': [0x11, 0x11, 0x11, 0x15, 0x15, 0x1B, 0x11],
-      'E': [0x1F, 0x10, 0x10, 0x1E, 0x10, 0x10, 0x1F],
-      'L': [0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x1F],
-      'C': [0x0E, 0x11, 0x10, 0x10, 0x10, 0x11, 0x0E],
-      'O': [0x0E, 0x11, 0x11, 0x11, 0x11, 0x11, 0x0E],
+      'I': [0x1F, 0x04, 0x04, 0x04, 0x04, 0x04, 0x1F],
+      'B': [0x1E, 0x11, 0x11, 0x1E, 0x11, 0x11, 0x1E],
       'M': [0x11, 0x1B, 0x15, 0x11, 0x11, 0x11, 0x11],
       'P': [0x1E, 0x11, 0x11, 0x1E, 0x10, 0x10, 0x10],
-      'I': [0x0E, 0x04, 0x04, 0x04, 0x04, 0x04, 0x0E],
+      'O': [0x0E, 0x11, 0x11, 0x11, 0x11, 0x11, 0x0E],
+      'S': [0x0F, 0x10, 0x10, 0x0E, 0x01, 0x01, 0x1E],
+      'T': [0x1F, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04],
+      'E': [0x1F, 0x10, 0x10, 0x1E, 0x10, 0x10, 0x1F],
       'N': [0x11, 0x11, 0x19, 0x15, 0x13, 0x11, 0x11],
-      'R': [0x1E, 0x11, 0x11, 0x1E, 0x14, 0x12, 0x11]
+      'R': [0x1E, 0x11, 0x11, 0x1E, 0x14, 0x12, 0x11],
+      'K': [0x11, 0x12, 0x14, 0x18, 0x14, 0x12, 0x11],
+      ' ': [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
     };
 
-    // 16x16 Defined Skull Bitmaps
+    // Skull Bitmap
     const SKULL_16X16 = [
       0b0000011111100000,
       0b0001111111111000,
@@ -355,10 +349,8 @@
       0b1100000000000011
     ];
 
-    // City Skyline Silhouette Heights
-    const SKYLINE = [4, 6, 6, 8, 12, 12, 12, 6, 4, 15, 15, 15, 8, 10, 10, 5, 18, 18, 6, 4, 8, 14, 14, 6];
+    const SKYLINE = [3, 5, 5, 7, 10, 10, 10, 5, 3, 14, 14, 14, 7, 9, 9, 4, 16, 16, 5, 3, 7, 12, 12, 5];
 
-    // --- Initialize Web Audio ---
     async function initAudio() {
       try {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -374,7 +366,7 @@
         overlay.style.display = 'none';
         draw();
       } catch (err) {
-        alert('Microphone access is required for the spectrum visualizer.');
+        alert('Microphone access is required for audio visualization.');
       }
     }
 
@@ -391,9 +383,8 @@
       }
     }
 
-    // --- Dot Matrix Drawing Helpers ---
     function clearDots() {
-      dotCtx.fillStyle = '#020509';
+      dotCtx.fillStyle = '#050507';
       dotCtx.fillRect(0, 0, dotCanvas.width, dotCanvas.height);
     }
 
@@ -404,8 +395,8 @@
       const py = y * gap + 2;
 
       dotCtx.fillStyle = active 
-        ? (bright ? currentTheme.peak : currentTheme.primary)
-        : currentTheme.dim;
+        ? (bright ? PALETTE.cF6F5F4 : PALETTE.cDDDDED)
+        : '#121216';
       dotCtx.fillRect(px, py, dotSize, dotSize);
     }
 
@@ -422,34 +413,39 @@
       }
     }
 
-    // --- Sequence Screen Logic ---
     function renderUpperMatrix(bassEnergy) {
       clearDots();
       seqFrame++;
 
-      // 1. WELCOME Banner
+      // 1. IBM Terminal Startup Sequence (Slow & Chill)
       if (seqState === 0) {
-        const text = "WELCOME";
-        const startX = Math.floor(60 - (seqFrame * 0.8));
+        const line1 = "IBM PC POST";
+        const ramVal = Math.min(640, Math.floor(seqFrame * 6));
         
-        for (let i = 0; i < text.length; i++) {
-          drawChar5x7(text[i], startX + (i * 7), 14);
+        for (let i = 0; i < line1.length; i++) {
+          drawChar5x7(line1[i], 10 + (i * 6), 6);
         }
 
-        if (startX < -50) {
+        // Draw RAM Counter
+        const ramText = ramVal + "K OK";
+        for (let i = 0; i < ramText.length; i++) {
+          drawChar5x7(ramText[i], 10 + (i * 6), 18);
+        }
+
+        if (seqFrame > 140) {
           seqState = 1;
           seqFrame = 0;
         }
       }
       
-      // 2. Pioneer Badge
+      // 2. Pioneer Shield
       else if (seqState === 1) {
         const text = "PIONEER";
         for (let i = 0; i < text.length; i++) {
-          drawChar5x7(text[i], 36 + (i * 6), 14);
+          drawChar5x7(text[i], 38 + (i * 6), 14);
         }
         
-        if (seqFrame > 80) {
+        if (seqFrame > 120) {
           seqState = 2;
           seqFrame = 0;
         }
@@ -468,62 +464,57 @@
           }
         }
 
-        if (seqFrame > 90) {
-          seqState = 3; // Permanent City Driving
+        if (seqFrame > 140) {
+          seqState = 3; // Permanent Chill Drive
         }
       }
 
-      // 4. Chill City Driving (Permanent)
+      // 4. Chill Night Driving Loop
       else if (seqState === 3) {
-        driveX += 0.3 + (bassEnergy * 0.4);
+        driveX += 0.15 + (bassEnergy * 0.15); // Slow, enjoyable scroll speed
 
-        // Draw City Skyline Silhouette
+        // Skyline
         for (let x = 0; x < 120; x++) {
-          const skyIndex = Math.floor((x + driveX * 0.5) % SKYLINE.length);
+          const skyIndex = Math.floor((x + driveX * 0.3) % SKYLINE.length);
           const height = SKYLINE[skyIndex];
           for (let y = 0; y < height; y++) {
             drawDot(x, 22 - y, true, false);
           }
         }
 
-        // Perspective Horizon Line
+        // Horizon
         for (let x = 0; x < 120; x++) {
           drawDot(x, 23, true, true);
         }
 
-        // Road Grid Lines
+        // Perspective Road Grid
         for (let y = 24; y < 36; y++) {
           const rowOffset = (y - 24);
-          const roadWidth = 20 + (rowOffset * 8);
+          const roadWidth = 18 + (rowOffset * 8);
           const leftX = Math.floor(60 - roadWidth / 2);
           const rightX = Math.floor(60 + roadWidth / 2);
 
           drawDot(leftX, y, true, false);
           drawDot(rightX, y, true, false);
 
-          // Center Dash Line
-          if (Math.floor(y + driveX) % 4 === 0) {
+          if (Math.floor(y + driveX) % 5 === 0) {
             drawDot(60, y, true, true);
           }
         }
       }
     }
 
-    // --- Spectrum Analyzer Draw Loop ---
     function draw() {
       const bufferLength = analyser.frequencyBinCount;
       const dataArray = new Uint8Array(bufferLength);
       analyser.getByteFrequencyData(dataArray);
 
-      // Compute Bass Energy for Upper Screen Reactivity
       let bassSum = 0;
       for (let i = 0; i < 8; i++) bassSum += dataArray[i];
       const bassEnergy = (bassSum / 8) / 255;
 
-      // Update Upper Dot Matrix
       renderUpperMatrix(bassEnergy);
 
-      // Render Bottom Spectrum Analyzer
       specCtx.clearRect(0, 0, specCanvas.width, specCanvas.height);
       const w = specCanvas.width;
       const h = specCanvas.height;
@@ -539,12 +530,11 @@
 
         barLevels[i] = rawVal;
 
-        // Peak Physics
         if (barLevels[i] > barPeaks[i]) {
           barPeaks[i] = barLevels[i];
           barVelocities[i] = 0;
         } else {
-          barVelocities[i] += 0.003;
+          barVelocities[i] += 0.002;
           barPeaks[i] -= barVelocities[i];
           if (barPeaks[i] < 0) barPeaks[i] = 0;
         }
@@ -552,27 +542,27 @@
         const activeSegs = Math.floor(barLevels[i] * numSegments);
         const x = i * barSpacing + (barSpacing - barWidth) / 2;
 
-        // Draw Segments
         for (let s = 0; s < numSegments; s++) {
           const y = h - (s + 1) * segHeight;
 
           if (s < activeSegs) {
             const ratio = s / numSegments;
-            specCtx.fillStyle = ratio > 0.85 
-              ? currentTheme.gradientTop 
-              : (ratio > 0.6 ? currentTheme.gradientMid : currentTheme.gradientBot);
+            if (ratio > 0.85) specCtx.fillStyle = PALETTE.c97C27E;
+            else if (ratio > 0.65) specCtx.fillStyle = PALETTE.c88AA6E;
+            else if (ratio > 0.45) specCtx.fillStyle = PALETTE.c5E8054;
+            else if (ratio > 0.25) specCtx.fillStyle = PALETTE.c654FA7;
+            else specCtx.fillStyle = PALETTE.c514088;
           } else {
-            specCtx.fillStyle = currentTheme.dim;
+            specCtx.fillStyle = '#121216';
           }
 
           specCtx.fillRect(x, y + 2, barWidth, segHeight - 3);
         }
 
-        // Draw Peak Dot
         if (barPeaks[i] > 0.02) {
           const peakSeg = Math.floor(barPeaks[i] * numSegments);
           const peakY = h - (peakSeg + 1) * segHeight;
-          specCtx.fillStyle = currentTheme.peak;
+          specCtx.fillStyle = PALETTE.cC6C5E3;
           specCtx.fillRect(x, peakY + 2, barWidth, 3);
         }
       }
@@ -580,21 +570,7 @@
       requestAnimationFrame(draw);
     }
 
-    // --- UI Listeners & Controls ---
     overlay.addEventListener('click', initAudio);
-
-    document.getElementById('colorCyan').addEventListener('click', (e) => {
-      currentTheme = COLOR_THEMES.cyan;
-      setActiveBtn(e.target);
-    });
-    document.getElementById('colorAmber').addEventListener('click', (e) => {
-      currentTheme = COLOR_THEMES.amber;
-      setActiveBtn(e.target);
-    });
-    document.getElementById('colorViolet').addEventListener('click', (e) => {
-      currentTheme = COLOR_THEMES.violet;
-      setActiveBtn(e.target);
-    });
 
     document.getElementById('gainLow').addEventListener('click', (e) => {
       micGain = 1.0;
