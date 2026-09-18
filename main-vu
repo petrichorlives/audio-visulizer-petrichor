@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pioneer VFD OEL Spectrum Analyzer</title>
+
+  <!-- PWA Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#05080c">
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #020305;
+      color: #79f7ff;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Headunit Enclosure Styling */
+    .headunit-frame {
+      position: relative;
+      width: 96vw;
+      max-width: 900px;
+      height: 90vh;
+      max-height: 520px;
+      background: linear-gradient(180deg, #181c22 0%, #0d0f12 100%);
+      border: 4px solid #2a313a;
+      border-radius: 12px;
+      box-shadow: 
+        0 0 0 2px #0a0c0e,
+        0 20px 50px rgba(0, 0, 0, 0.9),
+        inset 0 2px 3px rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 12px;
+    }
+
+    /* Glass VFD Display Area */
+    .vfd-display {
+      position: relative;
+      flex: 1;
+      background: #04080e;
+      border: 3px solid #141a22;
+      border-radius: 6px;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    /* VFD Glass Scanlines Overlay */
+    .vfd-display::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.35) 50%
+      );
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Top Section Grid Layout */
+    .top-panel {
+      display: flex;
+      gap: 12px;
+      height: 120px;
+    }
+
+    /* 120x36 Dot Matrix Screen */
+    .dot-matrix-container {
+      flex: 1;
+      background: #020509;
+      border: 1px solid #1a2636;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #dotMatrixCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Right Badge & Status Area */
+    .status-badge-container {
+      width: 180px;
+      background: #020509;
+      border: 1px solid #1a2636;
+      border-radius: 4px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    .brand-title {
+      font-weight: bold;
+      color: #79f7ff;
+      text-shadow: 0 0 6px rgba(121, 247, 255, 0.6);
+      text-align: center;
+      border-bottom: 1px solid #1a2636;
+      padding-bottom: 4px;
+    }
+
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      color: #3b8296;
+    }
+
+    .status-item span.val {
+      color: #79f7ff;
+    }
+
+    /* Bottom 24-Bar Spectrum Analyzer */
+    .spectrum-container {
+      flex: 1;
+      background: #020509;
+      border: 1px solid #1a2636;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    #spectrumCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #090d12;
+      border: 1px solid #18202c;
+      border-radius: 6px;
+      padding: 8px 12px;
+      z-index: 10;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      background: #121822;
+      color: #58a0b0;
+      border: 1px solid #222d3e;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover, .btn.active {
+      background: #1c2738;
+      color: #79f7ff;
+      border-color: #3b8296;
+      box-shadow: 0 0 8px rgba(121, 247, 255, 0.3);
+    }
+
+    /* Start Overlay */
+    #startOverlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(4, 8, 14, 0.92);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+      cursor: pointer;
+    }
+
+    .start-msg {
+      border: 2px solid #79f7ff;
+      color: #79f7ff;
+      padding: 16px 28px;
+      border-radius: 6px;
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(121, 247, 255, 0.8);
+      box-shadow: 0 0 15px rgba(121, 247, 255, 0.3);
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.7; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1.02); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="headunit-frame">
+    <div class="vfd-display">
+      
+      <!-- Top Section -->
+      <div class="top-panel">
+        <div class="dot-matrix-container">
+          <canvas id="dotMatrixCanvas" width="240" height="72"></canvas>
+        </div>
+        
+        <div class="status-badge-container">
+          <div class="brand-title">PIONEER OEL</div>
+          <div class="status-item"><span>DSP:</span> <span class="val">STUDIO</span></div>
+          <div class="status-item"><span>MODE:</span> <span class="val">DRIVE</span></div>
+          <div class="status-item"><span>PEAK:</span> <span class="val" id="peakVal">+3dB</span></div>
+          <div class="status-item"><span>DISP:</span> <span class="val">SPECTRUM</span></div>
+        </div>
+      </div>
+
+      <!-- Bottom Spectrum Analyzer -->
+      <div class="spectrum-container">
+        <canvas id="spectrumCanvas" width="800" height="300"></canvas>
+      </div>
+
+      <!-- Start Overlay -->
+      <div id="startOverlay">
+        <div class="start-msg">TAP TO START AUDIO INPUT</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-bar">
+      <div class="btn-group">
+        <button class="btn active" id="colorCyan">CYAN / GREEN</button>
+        <button class="btn" id="colorAmber">AMBER VFD</button>
+        <button class="btn" id="colorViolet">VIOLET NIGHT</button>
+      </div>
+      <div class="btn-group">
+        <button class="btn" id="gainLow">GAIN: LOW</button>
+        <button class="btn active" id="gainNorm">GAIN: NORM</button>
+        <button class="btn" id="gainHigh">GAIN: HIGH</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Configuration & Constants ---
+    const NUM_BARS = 24;
+    let micGain = 1.8;
+    
+    // Color Themes
+    const COLOR_THEMES = {
+      cyan: {
+        primary: '#79f7ff',
+        secondary: '#2ba8b8',
+        peak: '#ffffff',
+        dim: '#0a2028',
+        gradientTop: '#ff3366',
+        gradientMid: '#ffee33',
+        gradientBot: '#33ff88'
+      },
+      amber: {
+        primary: '#ffaa00',
+        secondary: '#b87000',
+        peak: '#ffffff',
+        dim: '#281800',
+        gradientTop: '#ff2200',
+        gradientMid: '#ff9900',
+        gradientBot: '#ffcc00'
+      },
+      violet: {
+        primary: '#cf79ff',
+        secondary: '#822ba8',
+        peak: '#ffffff',
+        dim: '#200a28',
+        gradientTop: '#ff33bb',
+        gradientMid: '#aa33ff',
+        gradientBot: '#33aaff'
+      }
+    };
+    let currentTheme = COLOR_THEMES.cyan;
+
+    // --- State & Canvas Elements ---
+    const dotCanvas = document.getElementById('dotMatrixCanvas');
+    const dotCtx = dotCanvas.getContext('2d');
+    const specCanvas = document.getElementById('spectrumCanvas');
+    const specCtx = specCanvas.getContext('2d');
+    const overlay = document.getElementById('startOverlay');
+
+    let audioCtx, analyser, micStream;
+    let frequencyBands = [];
+    let barLevels = new Float32Array(NUM_BARS);
+    let barPeaks = new Float32Array(NUM_BARS);
+    let barVelocities = new Float32Array(NUM_BARS);
+
+    // --- Sequence State Engine ---
+    // 0: WELCOME, 1: PIONEER SHIELD, 2: SKULL, 3: CITY DRIVING (PERMANENT)
+    let seqState = 0;
+    let seqFrame = 0;
+    let driveX = 0;
+
+    // --- Bitmaps (Custom 5x7 Font & Pixel Art) ---
+    const FONT_5X7 = {
+      'W': [0x11, 0x11, 0x11, 0x15, 0x15, 0x1B, 0x11],
+      'E': [0x1F, 0x10, 0x10, 0x1E, 0x10, 0x10, 0x1F],
+      'L': [0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x1F],
+      'C': [0x0E, 0x11, 0x10, 0x10, 0x10, 0x11, 0x0E],
+      'O': [0x0E, 0x11, 0x11, 0x11, 0x11, 0x11, 0x0E],
+      'M': [0x11, 0x1B, 0x15, 0x11, 0x11, 0x11, 0x11],
+      'P': [0x1E, 0x11, 0x11, 0x1E, 0x10, 0x10, 0x10],
+      'I': [0x0E, 0x04, 0x04, 0x04, 0x04, 0x04, 0x0E],
+      'N': [0x11, 0x11, 0x19, 0x15, 0x13, 0x11, 0x11],
+      'R': [0x1E, 0x11, 0x11, 0x1E, 0x14, 0x12, 0x11]
+    };
+
+    // 16x16 Defined Skull Bitmaps
+    const SKULL_16X16 = [
+      0b0000011111100000,
+      0b0001111111111000,
+      0b0011111111111100,
+      0b0111111111111110,
+      0b0111001111001110,
+      0b0111001111001110,
+      0b0111111111111110,
+      0b0011111001111100,
+      0b0001110000111000,
+      0b1000111111110001,
+      0b1100010110100011,
+      0b0110000110000110,
+      0b0011000110001100,
+      0b0001101111011000,
+      0b0011000110001100,
+      0b1100000000000011
+    ];
+
+    // City Skyline Silhouette Heights
+    const SKYLINE = [4, 6, 6, 8, 12, 12, 12, 6, 4, 15, 15, 15, 8, 10, 10, 5, 18, 18, 6, 4, 8, 14, 14, 6];
+
+    // --- Initialize Web Audio ---
+    async function initAudio() {
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        micStream = audioCtx.createMediaStreamSource(stream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 2048;
+        micStream.connect(analyser);
+
+        setupBands();
+        overlay.style.display = 'none';
+        draw();
+      } catch (err) {
+        alert('Microphone access is required for the spectrum visualizer.');
+      }
+    }
+
+    function setupBands() {
+      const nyquist = audioCtx.sampleRate / 2;
+      const minLog = Math.log10(31);
+      const maxLog = Math.log10(16000);
+      
+      for (let i = 0; i < NUM_BARS; i++) {
+        const logFreq = minLog + (i / (NUM_BARS - 1)) * (maxLog - minLog);
+        const freq = Math.pow(10, logFreq);
+        const index = Math.round(freq / (nyquist / (analyser.fftSize / 2)));
+        frequencyBands.push(Math.max(1, index));
+      }
+    }
+
+    // --- Dot Matrix Drawing Helpers ---
+    function clearDots() {
+      dotCtx.fillStyle = '#020509';
+      dotCtx.fillRect(0, 0, dotCanvas.width, dotCanvas.height);
+    }
+
+    function drawDot(x, y, active = true, bright = false) {
+      const dotSize = 1.5;
+      const gap = 2;
+      const px = x * gap + 2;
+      const py = y * gap + 2;
+
+      dotCtx.fillStyle = active 
+        ? (bright ? currentTheme.peak : currentTheme.primary)
+        : currentTheme.dim;
+      dotCtx.fillRect(px, py, dotSize, dotSize);
+    }
+
+    function drawChar5x7(char, startX, startY) {
+      const bmp = FONT_5X7[char];
+      if (!bmp) return;
+      for (let r = 0; r < 7; r++) {
+        const row = bmp[r];
+        for (let c = 0; c < 5; c++) {
+          if ((row >> (4 - c)) & 1) {
+            drawDot(startX + c, startY + r, true, true);
+          }
+        }
+      }
+    }
+
+    // --- Sequence Screen Logic ---
+    function renderUpperMatrix(bassEnergy) {
+      clearDots();
+      seqFrame++;
+
+      // 1. WELCOME Banner
+      if (seqState === 0) {
+        const text = "WELCOME";
+        const startX = Math.floor(60 - (seqFrame * 0.8));
+        
+        for (let i = 0; i < text.length; i++) {
+          drawChar5x7(text[i], startX + (i * 7), 14);
+        }
+
+        if (startX < -50) {
+          seqState = 1;
+          seqFrame = 0;
+        }
+      }
+      
+      // 2. Pioneer Badge
+      else if (seqState === 1) {
+        const text = "PIONEER";
+        for (let i = 0; i < text.length; i++) {
+          drawChar5x7(text[i], 36 + (i * 6), 14);
+        }
+        
+        if (seqFrame > 80) {
+          seqState = 2;
+          seqFrame = 0;
+        }
+      }
+
+      // 3. Skull & Crossbones
+      else if (seqState === 2) {
+        const brightEyes = bassEnergy > 0.6;
+        for (let r = 0; r < 16; r++) {
+          for (let c = 0; c < 16; c++) {
+            const bit = (SKULL_16X16[r] >> (15 - c)) & 1;
+            if (bit) {
+              const isEye = (r === 4 || r === 5) && (c === 4 || c === 5 || c === 10 || c === 11);
+              drawDot(52 + c, 10 + r, true, isEye && brightEyes);
+            }
+          }
+        }
+
+        if (seqFrame > 90) {
+          seqState = 3; // Permanent City Driving
+        }
+      }
+
+      // 4. Chill City Driving (Permanent)
+      else if (seqState === 3) {
+        driveX += 0.3 + (bassEnergy * 0.4);
+
+        // Draw City Skyline Silhouette
+        for (let x = 0; x < 120; x++) {
+          const skyIndex = Math.floor((x + driveX * 0.5) % SKYLINE.length);
+          const height = SKYLINE[skyIndex];
+          for (let y = 0; y < height; y++) {
+            drawDot(x, 22 - y, true, false);
+          }
+        }
+
+        // Perspective Horizon Line
+        for (let x = 0; x < 120; x++) {
+          drawDot(x, 23, true, true);
+        }
+
+        // Road Grid Lines
+        for (let y = 24; y < 36; y++) {
+          const rowOffset = (y - 24);
+          const roadWidth = 20 + (rowOffset * 8);
+          const leftX = Math.floor(60 - roadWidth / 2);
+          const rightX = Math.floor(60 + roadWidth / 2);
+
+          drawDot(leftX, y, true, false);
+          drawDot(rightX, y, true, false);
+
+          // Center Dash Line
+          if (Math.floor(y + driveX) % 4 === 0) {
+            drawDot(60, y, true, true);
+          }
+        }
+      }
+    }
+
+    // --- Spectrum Analyzer Draw Loop ---
+    function draw() {
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteFrequencyData(dataArray);
+
+      // Compute Bass Energy for Upper Screen Reactivity
+      let bassSum = 0;
+      for (let i = 0; i < 8; i++) bassSum += dataArray[i];
+      const bassEnergy = (bassSum / 8) / 255;
+
+      // Update Upper Dot Matrix
+      renderUpperMatrix(bassEnergy);
+
+      // Render Bottom Spectrum Analyzer
+      specCtx.clearRect(0, 0, specCanvas.width, specCanvas.height);
+      const w = specCanvas.width;
+      const h = specCanvas.height;
+      const barSpacing = w / NUM_BARS;
+      const barWidth = barSpacing * 0.75;
+      const numSegments = 20;
+      const segHeight = (h - 20) / numSegments;
+
+      for (let i = 0; i < NUM_BARS; i++) {
+        const fftIdx = frequencyBands[i];
+        let rawVal = (dataArray[fftIdx] / 255) * micGain;
+        rawVal = Math.min(1.0, Math.max(0.0, rawVal));
+
+        barLevels[i] = rawVal;
+
+        // Peak Physics
+        if (barLevels[i] > barPeaks[i]) {
+          barPeaks[i] = barLevels[i];
+          barVelocities[i] = 0;
+        } else {
+          barVelocities[i] += 0.003;
+          barPeaks[i] -= barVelocities[i];
+          if (barPeaks[i] < 0) barPeaks[i] = 0;
+        }
+
+        const activeSegs = Math.floor(barLevels[i] * numSegments);
+        const x = i * barSpacing + (barSpacing - barWidth) / 2;
+
+        // Draw Segments
+        for (let s = 0; s < numSegments; s++) {
+          const y = h - (s + 1) * segHeight;
+
+          if (s < activeSegs) {
+            const ratio = s / numSegments;
+            specCtx.fillStyle = ratio > 0.85 
+              ? currentTheme.gradientTop 
+              : (ratio > 0.6 ? currentTheme.gradientMid : currentTheme.gradientBot);
+          } else {
+            specCtx.fillStyle = currentTheme.dim;
+          }
+
+          specCtx.fillRect(x, y + 2, barWidth, segHeight - 3);
+        }
+
+        // Draw Peak Dot
+        if (barPeaks[i] > 0.02) {
+          const peakSeg = Math.floor(barPeaks[i] * numSegments);
+          const peakY = h - (peakSeg + 1) * segHeight;
+          specCtx.fillStyle = currentTheme.peak;
+          specCtx.fillRect(x, peakY + 2, barWidth, 3);
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    // --- UI Listeners & Controls ---
+    overlay.addEventListener('click', initAudio);
+
+    document.getElementById('colorCyan').addEventListener('click', (e) => {
+      currentTheme = COLOR_THEMES.cyan;
+      setActiveBtn(e.target);
+    });
+    document.getElementById('colorAmber').addEventListener('click', (e) => {
+      currentTheme = COLOR_THEMES.amber;
+      setActiveBtn(e.target);
+    });
+    document.getElementById('colorViolet').addEventListener('click', (e) => {
+      currentTheme = COLOR_THEMES.violet;
+      setActiveBtn(e.target);
+    });
+
+    document.getElementById('gainLow').addEventListener('click', (e) => {
+      micGain = 1.0;
+      setActiveBtn(e.target);
+    });
+    document.getElementById('gainNorm').addEventListener('click', (e) => {
+      micGain = 1.8;
+      setActiveBtn(e.target);
+    });
+    document.getElementById('gainHigh').addEventListener('click', (e) => {
+      micGain = 2.8;
+      setActiveBtn(e.target);
+    });
+
+    function setActiveBtn(btn) {
+      btn.parentElement.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>
