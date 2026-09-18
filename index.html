@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Petrichor Audio Synthesizer</title>
 
-  <!-- PWA Meta Tags -->
+  <!-- PWA & Mobile Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#1a1816">
+  <meta name="theme-color" content="#0c0b0a">
 
   <style>
     * {
@@ -17,32 +17,32 @@
       padding: 0;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
 
-    body {
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       background-color: #0c0b0a;
       color: #e2dad0;
       font-family: 'Courier New', Courier, monospace;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      overflow: hidden;
-      background-image: 
-        radial-gradient(circle at 50% 50%, #1c1814 0%, #080706 100%);
+      background-image: radial-gradient(circle at 50% 50%, #1c1814 0%, #080706 100%);
     }
 
-    /* Tactile Industrial Enclosure Outer Frame */
+    /* Fullscreen Enclosure Container with iPhone Notch Safe Area Padding */
     .headunit-frame {
       position: relative;
-      width: 96vw;
-      max-width: 940px;
-      height: 92vh;
-      max-height: 560px;
+      width: 100vw;
+      height: 100vh;
+      max-width: 1000px;
+      max-height: 100vh;
       background: linear-gradient(165deg, #322d28 0%, #221e1a 45%, #181512 100%);
       border: 2px solid #5a5046;
-      border-radius: 14px;
+      border-radius: 0px;
       box-shadow: 
         0 0 0 1px #0e0c0b,
         0 28px 65px rgba(0, 0, 0, 0.95),
@@ -50,37 +50,47 @@
         inset 0 -3px 8px rgba(0, 0, 0, 0.8);
       display: flex;
       flex-direction: column;
-      padding: 22px 20px 18px 20px;
-      gap: 14px;
+      padding: max(12px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+      gap: 10px;
     }
 
-    /* Industrial Hex Bolts / Corner Fittings */
+    @media (min-width: 600px) and (min-height: 500px) {
+      .headunit-frame {
+        width: 96vw;
+        height: 92vh;
+        max-height: 600px;
+        border-radius: 14px;
+      }
+    }
+
+    /* Industrial Corner Bolt Accents */
     .bolt {
       position: absolute;
-      width: 11px;
-      height: 11px;
+      width: 10px;
+      height: 10px;
       background: linear-gradient(135deg, #4a423a 0%, #1a1714 100%);
       border: 1px solid #6b5f54;
       border-radius: 50%;
       box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2), 0 2px 4px rgba(0,0,0,0.8);
+      z-index: 2;
     }
     .bolt::after {
       content: "";
       position: absolute;
-      top: 4px; left: 2px; width: 5px; height: 1px;
+      top: 4px; left: 2px; width: 4px; height: 1px;
       background: #100e0d;
     }
-    .bolt-tl { top: 7px; left: 8px; }
-    .bolt-tr { top: 7px; right: 8px; }
-    .bolt-bl { bottom: 7px; left: 8px; }
-    .bolt-br { bottom: 7px; right: 8px; }
+    .bolt-tl { top: max(6px, env(safe-area-inset-top)); left: max(6px, env(safe-area-inset-left)); }
+    .bolt-tr { top: max(6px, env(safe-area-inset-top)); right: max(6px, env(safe-area-inset-right)); }
+    .bolt-bl { bottom: max(6px, env(safe-area-inset-bottom)); left: max(6px, env(safe-area-inset-left)); }
+    .bolt-br { bottom: max(6px, env(safe-area-inset-bottom)); right: max(6px, env(safe-area-inset-right)); }
 
-    /* Recessed CRT/VFD Glass Bezel Housing */
+    /* Recessed CRT Glass Screen Bezel */
     .vfd-display {
       position: relative;
       flex: 1;
       background: #060907;
-      border: 5px solid #141210;
+      border: 4px solid #141210;
       border-radius: 8px;
       box-shadow: 
         inset 0 0 40px rgba(0, 0, 0, 0.95),
@@ -88,22 +98,21 @@
         0 2px 5px rgba(0, 0, 0, 0.7);
       display: flex;
       flex-direction: column;
-      padding: 14px;
-      gap: 12px;
+      padding: 10px;
+      gap: 8px;
       overflow: hidden;
     }
 
-    /* Warm Glass Reflection / Inner Curved Bevel Shadow */
+    /* CRT Surface Reflection & Scanline Overlays */
     .vfd-display::before {
       content: "";
       position: absolute;
-      top: 0; left: 0; right: 0; height: 45%;
-      background: linear-gradient(180deg, rgba(255, 245, 230, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+      top: 0; left: 0; right: 0; height: 40%;
+      background: linear-gradient(180deg, rgba(255, 245, 230, 0.04) 0%, rgba(255, 255, 255, 0) 100%);
       pointer-events: none;
       z-index: 6;
     }
 
-    /* CRT Phosphor Scanline Texture Overlay */
     .vfd-display::after {
       content: "";
       position: absolute;
@@ -117,14 +126,14 @@
       z-index: 5;
     }
 
-    /* Top Section Grid Layout */
+    /* Top Panel Layout (Oscilloscope + Status Badge) */
     .top-panel {
       display: flex;
-      gap: 14px;
-      height: 135px;
+      gap: 10px;
+      height: 125px;
+      flex-shrink: 0;
     }
 
-    /* Oscilloscope Screen Box */
     .dot-matrix-container {
       flex: 1;
       background: #030805;
@@ -142,20 +151,21 @@
       display: block;
     }
 
-    /* Right Badge / Telemetry Panel */
+    /* Status Telemetry Badge */
     .status-badge-container {
-      width: 195px;
+      width: 170px;
       background: #030805;
       border: 2px solid #1c261e;
       border-radius: 5px;
-      padding: 10px 12px;
+      padding: 8px 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      font-size: 11px;
+      font-size: 10px;
       letter-spacing: 1px;
       box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8);
       transition: border-color 0.3s ease;
+      flex-shrink: 0;
     }
 
     .brand-title {
@@ -164,8 +174,8 @@
       text-shadow: 0 0 8px rgba(98, 248, 165, 0.6);
       text-align: center;
       border-bottom: 1px solid #1c261e;
-      padding-bottom: 6px;
-      font-size: 11px;
+      padding-bottom: 4px;
+      font-size: 10px;
       transition: color 0.3s, text-shadow 0.3s;
     }
 
@@ -182,7 +192,7 @@
       transition: color 0.3s, text-shadow 0.3s;
     }
 
-    /* Bottom 24-Bar Spectrum Analyzer */
+    /* Spectrum Analyzer Screen */
     .spectrum-container {
       flex: 1;
       background: #030805;
@@ -191,6 +201,7 @@
       position: relative;
       box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
       transition: border-color 0.3s ease;
+      min-height: 120px;
     }
 
     #spectrumCanvas {
@@ -199,37 +210,39 @@
       display: block;
     }
 
-    /* Tactile Control Panel Bar */
     .controls-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: linear-gradient(180deg, #1f1b18 0%, #141210 100%);
       border: 1px solid #3c342c;
-      border-radius: 7px;
-      padding: 8px 14px;
+      border-radius: 6px;
+      padding: 6px 10px;
       z-index: 10;
+      gap: 6px;
+      flex-shrink: 0;
       box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08), 0 3px 6px rgba(0,0,0,0.5);
     }
 
     .btn-group {
       display: flex;
-      gap: 8px;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
-    /* Physical Rocker / Bakelite Style Buttons */
     .btn {
       background: linear-gradient(180deg, #2a2520 0%, #1a1714 100%);
       color: #8c8278;
       border: 1px solid #423a32;
-      padding: 7px 13px;
+      padding: 6px 10px;
       border-radius: 4px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: bold;
       cursor: pointer;
       font-family: inherit;
       box-shadow: 0 2px 4px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
       transition: all 0.2s ease;
+      touch-action: manipulation;
     }
 
     .btn:hover {
@@ -245,7 +258,7 @@
       box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 0 8px rgba(98, 248, 165, 0.3);
     }
 
-    /* Start Overlay */
+    /* Start Touch Overlay */
     #startOverlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -256,16 +269,18 @@
       align-items: center;
       z-index: 20;
       cursor: pointer;
+      padding: 20px;
     }
 
     .start-msg {
       border: 2px solid #62f8a5;
       color: #62f8a5;
       background: #06120a;
-      padding: 16px 28px;
+      padding: 14px 22px;
       border-radius: 6px;
-      font-size: 13px;
+      font-size: 12px;
       letter-spacing: 2px;
+      text-align: center;
       text-shadow: 0 0 10px rgba(98, 248, 165, 0.8);
       box-shadow: 0 0 25px rgba(98, 248, 165, 0.25);
       animation: pulse 1.8s infinite alternate;
@@ -275,12 +290,42 @@
       from { opacity: 0.75; transform: scale(0.98); }
       to { opacity: 1; transform: scale(1.02); }
     }
+
+    /* Mobile Horizontal / Landscape Tight Viewports Optimization */
+    @media (orientation: landscape) and (max-height: 500px) {
+      .headunit-frame {
+        padding: max(4px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+        gap: 6px;
+      }
+      .vfd-display {
+        padding: 6px;
+        gap: 6px;
+      }
+      .top-panel {
+        height: 90px;
+      }
+      .status-badge-container {
+        width: 145px;
+        font-size: 9px;
+        padding: 6px;
+      }
+      .brand-title {
+        font-size: 9px;
+      }
+      .controls-bar {
+        padding: 4px 8px;
+      }
+      .btn {
+        padding: 4px 8px;
+        font-size: 9px;
+      }
+    }
   </style>
 </head>
 <body>
 
   <div class="headunit-frame">
-    <!-- Corner Hardware Fittings -->
+    <!-- Corner Bolts -->
     <div class="bolt bolt-tl"></div>
     <div class="bolt bolt-tr"></div>
     <div class="bolt bolt-bl"></div>
@@ -308,7 +353,7 @@
         <canvas id="spectrumCanvas"></canvas>
       </div>
 
-      <!-- Start Overlay -->
+      <!-- Touch Start Overlay -->
       <div id="startOverlay">
         <div class="start-msg">TAP TO START AUDIO INPUT</div>
       </div>
@@ -333,7 +378,7 @@
     const NUM_BARS = 24;
     let micGain = 1.8;
     
-    // Warm Analog CRT / VFD Themes
+    // Analog Colorways
     const THEMES = {
       emerald: {
         bg: '#030805',
@@ -342,7 +387,6 @@
         primary: '#62f8a5',
         primaryDim: '#2e7a50',
         primaryDark: '#0a2214',
-        textDim: '#1e5233',
         peak: '#ffb03a',
         gradBot: '#1b4d32',
         gradMid: '#3fb875',
@@ -355,7 +399,6 @@
         primary: '#ffaa33',
         primaryDim: '#8a5518',
         primaryDark: '#281705',
-        textDim: '#5e380e',
         peak: '#ffffff',
         gradBot: '#5c2d04',
         gradMid: '#cc6a08',
@@ -368,7 +411,6 @@
         primary: '#52b2ff',
         primaryDim: '#20588a',
         primaryDark: '#071b30',
-        textDim: '#143c61',
         peak: '#ff5277',
         gradBot: '#10355c',
         gradMid: '#2d7fcc',
@@ -391,15 +433,13 @@
     let barPeaks = new Float32Array(NUM_BARS);
     let barVelocities = new Float32Array(NUM_BARS);
 
-    // Boot Engine States: 0 = Terminal Boot (~5s), 1 = Oscilloscope Waveform Mode
     let isBooted = false;
     let bootFrame = 0;
 
-    // Resizing & HiDPI Canvas Scaling
+    // --- Dynamic HiDPI Canvas Resizing Engine ---
     function resizeCanvases() {
       const dpr = window.devicePixelRatio || 1;
 
-      // Dot Matrix Container
       const dotBox = document.getElementById('dotBox');
       const dw = dotBox.clientWidth;
       const dh = dotBox.clientHeight;
@@ -407,7 +447,6 @@
       dotCanvas.height = dh * dpr;
       dotCtx.scale(dpr, dpr);
 
-      // Spectrum Container
       const specBox = document.getElementById('specBox');
       const sw = specBox.clientWidth;
       const sh = specBox.clientHeight;
@@ -417,6 +456,9 @@
     }
 
     window.addEventListener('resize', resizeCanvases);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(resizeCanvases, 200);
+    });
 
     async function initAudio() {
       try {
@@ -452,7 +494,7 @@
       }
     }
 
-    // --- Draw Oscilloscope Grid ---
+    // --- Oscilloscope Grid Drawing ---
     function drawScopeGrid(w, h) {
       dotCtx.fillStyle = currentTheme.bg;
       dotCtx.fillRect(0, 0, w, h);
@@ -460,21 +502,20 @@
       dotCtx.strokeStyle = currentTheme.grid;
       dotCtx.lineWidth = 1;
 
-      // Draw Grid Lines
-      for (let x = 0; x < w; x += 32) {
+      for (let x = 0; x < w; x += 30) {
         dotCtx.beginPath();
         dotCtx.moveTo(x, 0);
         dotCtx.lineTo(x, h);
         dotCtx.stroke();
       }
-      for (let y = 0; y < h; y += 22) {
+      for (let y = 0; y < h; y += 20) {
         dotCtx.beginPath();
         dotCtx.moveTo(0, y);
         dotCtx.lineTo(w, y);
         dotCtx.stroke();
       }
 
-      // Center Axis Graticule Crosshairs
+      // Center Axes
       dotCtx.strokeStyle = currentTheme.primaryDark;
       dotCtx.beginPath();
       dotCtx.moveTo(0, h / 2);
@@ -484,7 +525,7 @@
       dotCtx.stroke();
     }
 
-    // --- Render Terminal Boot or Oscilloscope ---
+    // --- STREAMING_CHUNK:Rendering CRT Oscilloscope wave & Terminal sequence... ---
     function renderUpperScreen(timeData) {
       const w = dotCanvas.clientWidth;
       const h = dotCanvas.clientHeight;
@@ -495,15 +536,14 @@
         dotCtx.fillRect(0, 0, w, h);
 
         dotCtx.fillStyle = currentTheme.primary;
-        dotCtx.font = '13px "Courier New", monospace';
+        dotCtx.font = '12px "Courier New", monospace';
         dotCtx.shadowColor = currentTheme.primary;
         dotCtx.shadowBlur = 6;
 
-        // Terminal text appearing over ~5 seconds (approx 300 frames at 60fps)
-        if (bootFrame > 15) dotCtx.fillText("PETRICHOR AUDIO SYNTHESIZER v1.0", 18, 28);
-        if (bootFrame > 75) dotCtx.fillText("INITIALIZING OSCILLATORS... OK", 18, 52);
-        if (bootFrame > 140) dotCtx.fillText("CALIBRATING CRT PHOSPHOR... OK", 18, 76);
-        if (bootFrame > 210) dotCtx.fillText("SYSTEM READY. OSCILLOSCOPE ACTIVE.", 18, 100);
+        if (bootFrame > 15) dotCtx.fillText("PETRICHOR AUDIO SYNTHESIZER v1.0", 14, 24);
+        if (bootFrame > 75) dotCtx.fillText("INITIALIZING OSCILLATORS... OK", 14, 46);
+        if (bootFrame > 140) dotCtx.fillText("CALIBRATING CRT PHOSPHOR... OK", 14, 68);
+        if (bootFrame > 210) dotCtx.fillText("SYSTEM READY. OSCILLOSCOPE ACTIVE.", 14, 90);
 
         dotCtx.shadowBlur = 0;
 
@@ -514,7 +554,6 @@
         return;
       }
 
-      // Live Oscilloscope Waveforms
       drawScopeGrid(w, h);
 
       dotCtx.shadowColor = currentTheme.primary;
@@ -527,7 +566,6 @@
       let x = 0;
 
       for (let i = 0; i < timeData.length; i++) {
-        // Normalizing audio signal centered around h/2 without horizontal offsets
         const v = ((timeData[i] - 128) / 128.0) * (micGain * 0.7);
         const y = (h / 2) + (v * (h / 2));
 
@@ -541,19 +579,16 @@
       dotCtx.shadowBlur = 0;
     }
 
-    // --- Main Render Loop ---
+    // --- STREAMING_CHUNK:Rendering Spectrum Analyzer with smooth vertical gradients... ---
     function draw() {
-      // Frequency Data for Bottom Spectrum
       const freqArray = new Uint8Array(analyser.frequencyBinCount);
       analyser.getByteFrequencyData(freqArray);
 
-      // Time Domain Data for Upper Oscilloscope
       const timeArray = new Uint8Array(analyser.fftSize);
       analyser.getByteTimeDomainData(timeArray);
 
       renderUpperScreen(timeArray);
 
-      // Render Bottom Spectrum Analyzer
       const w = specCanvas.clientWidth;
       const h = specCanvas.clientHeight;
       specCtx.clearRect(0, 0, w, h);
@@ -561,10 +596,9 @@
       specCtx.fillStyle = currentTheme.bg;
       specCtx.fillRect(0, 0, w, h);
 
-      // Draw Grid on Spectrum Background
       specCtx.strokeStyle = currentTheme.grid;
       specCtx.lineWidth = 1;
-      for (let y = 0; y < h; y += 24) {
+      for (let y = 0; y < h; y += 22) {
         specCtx.beginPath();
         specCtx.moveTo(0, y);
         specCtx.lineTo(w, y);
@@ -574,7 +608,7 @@
       const barSpacing = w / NUM_BARS;
       const barWidth = barSpacing * 0.72;
       const numSegments = 22;
-      const segHeight = (h - 20) / numSegments;
+      const segHeight = (h - 16) / numSegments;
 
       for (let i = 0; i < NUM_BARS; i++) {
         const fftIdx = frequencyBands[i];
@@ -601,7 +635,6 @@
           if (s < activeSegs) {
             const ratio = s / numSegments;
             
-            // Warm Bar Gradient Interpolation
             const grad = specCtx.createLinearGradient(0, y + segHeight, 0, y);
             if (ratio > 0.85) {
               grad.addColorStop(0, currentTheme.gradMid);
@@ -625,7 +658,6 @@
           specCtx.fillRect(x, y + 2, barWidth, segHeight - 3);
         }
 
-        // Peak Indicators
         if (barPeaks[i] > 0.02) {
           const peakSeg = Math.floor(barPeaks[i] * numSegments);
           const peakY = h - (peakSeg + 1) * segHeight;
@@ -639,16 +671,14 @@
       requestAnimationFrame(draw);
     }
 
-    // --- Apply Visual Theme Colors ---
+    // --- Theme & Control Handlers ---
     function applyTheme(themeKey) {
       currentTheme = THEMES[themeKey];
 
-      // Update Containers
       document.getElementById('dotBox').style.borderColor = currentTheme.border;
       document.getElementById('badgeBox').style.borderColor = currentTheme.border;
       document.getElementById('specBox').style.borderColor = currentTheme.border;
 
-      // Update Text Items
       const brand = document.getElementById('brandTitle');
       brand.style.color = currentTheme.primary;
       brand.style.textShadow = `0 0 8px ${currentTheme.primary}`;
@@ -665,8 +695,11 @@
       });
     }
 
-    // --- UI Listeners & Controls ---
     overlay.addEventListener('click', initAudio);
+    overlay.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      initAudio();
+    });
 
     document.getElementById('themeEmerald').addEventListener('click', (e) => {
       applyTheme('emerald');
