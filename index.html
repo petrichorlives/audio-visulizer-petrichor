@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pioneer VFD OEL Spectrum Analyzer</title>
+  <title>Petrichor Audio Synthesizer</title>
 
   <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#1e1d1a">
+  <meta name="theme-color" content="#0d1013">
 
   <style>
     * {
@@ -20,8 +20,8 @@
     }
 
     body {
-      background-color: #0d0c0b;
-      color: #dddded;
+      background-color: #06080a;
+      color: #00ff66;
       font-family: 'Courier New', Courier, monospace;
       display: flex;
       flex-direction: column;
@@ -31,49 +31,49 @@
       overflow: hidden;
     }
 
-    /* Heavy Physical Tech Chassis */
+    /* Industrial Test-Bench Chassis */
     .headunit-frame {
       position: relative;
       width: 96vw;
       max-width: 920px;
       height: 90vh;
       max-height: 540px;
-      background: linear-gradient(180deg, #3f3c37 0%, #21201d 100%);
-      border: 4px solid #9c8562;
+      background: linear-gradient(180deg, #242b32 0%, #14181c 100%);
+      border: 4px solid #3a4550;
       border-radius: 10px;
       box-shadow: 
-        0 0 0 3px #181715,
+        0 0 0 2px #0a0c0e,
         0 25px 60px rgba(0, 0, 0, 0.95),
-        inset 0 2px 4px rgba(246, 245, 244, 0.15);
+        inset 0 2px 4px rgba(255, 255, 255, 0.1);
       display: flex;
       flex-direction: column;
       padding: 18px;
       gap: 14px;
     }
 
-    /* Screw Heads for Physical Hardware Detail */
+    /* Screws for Laboratory/Rackmount Aesthetics */
     .headunit-frame::before, .headunit-frame::after {
       content: "";
       position: absolute;
       width: 10px;
       height: 10px;
-      background: #1e1d1a;
-      border: 1px solid #9c8562;
+      background: #0f1215;
+      border: 1px solid #485665;
       border-radius: 50%;
     }
     .headunit-frame::before { top: 6px; left: 6px; }
     .headunit-frame::after { top: 6px; right: 6px; }
 
-    /* Recessed VFD Glass Display Container */
+    /* Recessed CRT Glass Screen Area */
     .vfd-display {
       position: relative;
       flex: 1;
-      background: #09090b;
-      border: 4px solid #1c1b18;
+      background: #030805;
+      border: 4px solid #101518;
       border-radius: 6px;
       box-shadow: 
-        inset 0 0 25px rgba(0, 0, 0, 0.95),
-        inset 0 2px 8px rgba(0, 0, 0, 0.8);
+        inset 0 0 35px rgba(0, 255, 102, 0.15),
+        inset 0 0 20px rgba(0, 0, 0, 0.95);
       display: flex;
       flex-direction: column;
       padding: 12px;
@@ -81,14 +81,14 @@
       overflow: hidden;
     }
 
-    /* VFD Glass Texture & Phosphor Glow Scanlines */
+    /* CRT Phosphor Scanline Texture Overlay */
     .vfd-display::after {
       content: "";
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       background: linear-gradient(
-        rgba(221, 221, 237, 0) 60%, 
-        rgba(0, 0, 0, 0.4) 40%
+        rgba(0, 255, 102, 0) 60%, 
+        rgba(0, 0, 0, 0.45) 40%
       );
       background-size: 100% 3px;
       pointer-events: none;
@@ -99,17 +99,18 @@
     .top-panel {
       display: flex;
       gap: 12px;
-      height: 120px;
+      height: 130px;
     }
 
-    /* 120x36 Dot Matrix Screen */
+    /* Oscilloscope Screen Box */
     .dot-matrix-container {
       flex: 1;
-      background: #050507;
-      border: 2px solid #23221e;
+      background: #020a05;
+      border: 2px solid #0d2818;
       border-radius: 4px;
       position: relative;
       overflow: hidden;
+      box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.2);
     }
 
     #dotMatrixCanvas {
@@ -118,13 +119,13 @@
       display: block;
     }
 
-    /* Right Status Badge Panel */
+    /* Right Badge / Telemetry Panel */
     .status-badge-container {
-      width: 180px;
-      background: #050507;
-      border: 2px solid #23221e;
+      width: 200px;
+      background: #020a05;
+      border: 2px solid #0d2818;
       border-radius: 4px;
-      padding: 8px 10px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -134,30 +135,33 @@
 
     .brand-title {
       font-weight: bold;
-      color: #f6f5f4;
-      text-shadow: 0 0 8px rgba(198, 197, 227, 0.7);
+      color: #00ff66;
+      text-shadow: 0 0 8px rgba(0, 255, 102, 0.8);
       text-align: center;
-      border-bottom: 1px solid #3f3c37;
-      padding-bottom: 4px;
+      border-bottom: 1px solid #0d2818;
+      padding-bottom: 6px;
+      font-size: 11px;
     }
 
     .status-item {
       display: flex;
       justify-content: space-between;
-      color: #88aa6e;
+      color: #008833;
     }
 
     .status-item span.val {
-      color: #dddded;
+      color: #00ff66;
+      text-shadow: 0 0 5px rgba(0, 255, 102, 0.5);
     }
 
     /* Bottom 24-Bar Spectrum Analyzer */
     .spectrum-container {
       flex: 1;
-      background: #050507;
-      border: 2px solid #23221e;
+      background: #020a05;
+      border: 2px solid #0d2818;
       border-radius: 4px;
       position: relative;
+      box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.1);
     }
 
     #spectrumCanvas {
@@ -171,8 +175,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #181715;
-      border: 1px solid #3f3c37;
+      background: #14181c;
+      border: 1px solid #2b353e;
       border-radius: 6px;
       padding: 8px 12px;
       z-index: 10;
@@ -184,9 +188,9 @@
     }
 
     .btn {
-      background: #252420;
-      color: #88aa6e;
-      border: 1px solid #3f3c37;
+      background: #1f262d;
+      color: #00bb44;
+      border: 1px solid #323e4a;
       padding: 6px 12px;
       border-radius: 4px;
       font-size: 11px;
@@ -196,17 +200,17 @@
     }
 
     .btn:hover, .btn.active {
-      background: #3f3c37;
-      color: #f6f5f4;
-      border-color: #9c8562;
-      box-shadow: 0 0 8px rgba(156, 133, 98, 0.4);
+      background: #2b353e;
+      color: #00ff66;
+      border-color: #00ff66;
+      box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
     }
 
     /* Start Overlay */
     #startOverlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(9, 9, 11, 0.94);
+      background: rgba(3, 8, 5, 0.94);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -216,15 +220,15 @@
     }
 
     .start-msg {
-      border: 2px solid #9c8562;
-      color: #f6f5f4;
-      background: #1e1d1a;
+      border: 2px solid #00ff66;
+      color: #00ff66;
+      background: #020f06;
       padding: 16px 28px;
       border-radius: 6px;
       font-size: 13px;
       letter-spacing: 2px;
-      text-shadow: 0 0 8px rgba(246, 245, 244, 0.6);
-      box-shadow: 0 0 20px rgba(156, 133, 98, 0.3);
+      text-shadow: 0 0 10px rgba(0, 255, 102, 0.9);
+      box-shadow: 0 0 25px rgba(0, 255, 102, 0.3);
       animation: pulse 1.8s infinite alternate;
     }
 
@@ -242,15 +246,15 @@
       <!-- Top Section -->
       <div class="top-panel">
         <div class="dot-matrix-container">
-          <canvas id="dotMatrixCanvas" width="240" height="72"></canvas>
+          <canvas id="dotMatrixCanvas" width="480" height="130"></canvas>
         </div>
         
         <div class="status-badge-container">
-          <div class="brand-title">PIONEER OEL</div>
-          <div class="status-item"><span>DSP:</span> <span class="val">STUDIO</span></div>
-          <div class="status-item"><span>MODE:</span> <span class="val">IBM POST</span></div>
-          <div class="status-item"><span>PEAK:</span> <span class="val" id="peakVal">+3dB</span></div>
-          <div class="status-item"><span>DISP:</span> <span class="val">SPECTRUM</span></div>
+          <div class="brand-title">PETRICHOR SYNTH</div>
+          <div class="status-item"><span>MODEL:</span> <span class="val">PAS-100</span></div>
+          <div class="status-item"><span>SCOPE:</span> <span class="val" id="scopeMode">BOOTING</span></div>
+          <div class="status-item"><span>GAIN:</span> <span class="val" id="gainVal">1.8x</span></div>
+          <div class="status-item"><span>STATUS:</span> <span class="val">ACTIVE</span></div>
         </div>
       </div>
 
@@ -268,7 +272,7 @@
     <!-- Controls -->
     <div class="controls-bar">
       <div class="btn-group">
-        <button class="btn active" id="colorPalette">PALETTE: PALETTE VFD</button>
+        <button class="btn active" id="modeOsc">OSCILLOSCOPE WAVES</button>
       </div>
       <div class="btn-group">
         <button class="btn" id="gainLow">GAIN: LOW</button>
@@ -282,18 +286,14 @@
     const NUM_BARS = 24;
     let micGain = 1.8;
     
-    // User Provided Custom Palette
-    const PALETTE = {
-      c3F3C37: '#3F3C37', // Dark Grey Chassis
-      c5E8054: '#5E8054', // Forest Green
-      c514088: '#514088', // Deep Purple
-      c654FA7: '#654FA7', // Bright Purple
-      c9C8562: '#9C8562', // Tan Metallic Accent
-      c88AA6E: '#88AA6E', // Sage Green
-      c97C27E: '#97C27E', // Light Green
-      cC6C5E3: '#C6C5E3', // Soft Lavender
-      cDDDDED: '#DDDDED', // Ice White
-      cF6F5F4: '#F6F5F4'  // Peak Bright White
+    // Oscilloscope & Radar CRT Palette
+    const CRT_PALETTE = {
+      bg: '#020a05',
+      grid: '#082212',
+      trace: '#00ff66',
+      traceDim: '#008833',
+      traceBright: '#ffffff',
+      peak: '#ffaa00'
     };
 
     const dotCanvas = document.getElementById('dotMatrixCanvas');
@@ -301,6 +301,7 @@
     const specCanvas = document.getElementById('spectrumCanvas');
     const specCtx = specCanvas.getContext('2d');
     const overlay = document.getElementById('startOverlay');
+    const scopeModeElem = document.getElementById('scopeMode');
 
     let audioCtx, analyser, micStream;
     let frequencyBands = [];
@@ -308,48 +309,9 @@
     let barPeaks = new Float32Array(NUM_BARS);
     let barVelocities = new Float32Array(NUM_BARS);
 
-    // Sequence States: 0: IBM BOOT, 1: PIONEER SHIELD, 2: SKULL, 3: CHILL DRIVE (PERMANENT)
-    let seqState = 0;
-    let seqFrame = 0;
-    let driveX = 0;
-
-    // Bitmap Font (5x7)
-    const FONT_5X7 = {
-      'I': [0x1F, 0x04, 0x04, 0x04, 0x04, 0x04, 0x1F],
-      'B': [0x1E, 0x11, 0x11, 0x1E, 0x11, 0x11, 0x1E],
-      'M': [0x11, 0x1B, 0x15, 0x11, 0x11, 0x11, 0x11],
-      'P': [0x1E, 0x11, 0x11, 0x1E, 0x10, 0x10, 0x10],
-      'O': [0x0E, 0x11, 0x11, 0x11, 0x11, 0x11, 0x0E],
-      'S': [0x0F, 0x10, 0x10, 0x0E, 0x01, 0x01, 0x1E],
-      'T': [0x1F, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04],
-      'E': [0x1F, 0x10, 0x10, 0x1E, 0x10, 0x10, 0x1F],
-      'N': [0x11, 0x11, 0x19, 0x15, 0x13, 0x11, 0x11],
-      'R': [0x1E, 0x11, 0x11, 0x1E, 0x14, 0x12, 0x11],
-      'K': [0x11, 0x12, 0x14, 0x18, 0x14, 0x12, 0x11],
-      ' ': [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-    };
-
-    // Skull Bitmap
-    const SKULL_16X16 = [
-      0b0000011111100000,
-      0b0001111111111000,
-      0b0011111111111100,
-      0b0111111111111110,
-      0b0111001111001110,
-      0b0111001111001110,
-      0b0111111111111110,
-      0b0011111001111100,
-      0b0001110000111000,
-      0b1000111111110001,
-      0b1100010110100011,
-      0b0110000110000110,
-      0b0011000110001100,
-      0b0001101111011000,
-      0b0011000110001100,
-      0b1100000000000011
-    ];
-
-    const SKYLINE = [3, 5, 5, 7, 10, 10, 10, 5, 3, 14, 14, 14, 7, 9, 9, 4, 16, 16, 5, 3, 7, 12, 12, 5];
+    // Boot Engine States: 0 = Terminal Boot (~5s), 1 = Oscilloscope Waveform Mode
+    let isBooted = false;
+    let bootFrame = 0;
 
     async function initAudio() {
       try {
@@ -383,149 +345,122 @@
       }
     }
 
-    function clearDots() {
-      dotCtx.fillStyle = '#050507';
-      dotCtx.fillRect(0, 0, dotCanvas.width, dotCanvas.height);
-    }
+    // --- Draw Oscilloscope Grid ---
+    function drawScopeGrid() {
+      const w = dotCanvas.width;
+      const h = dotCanvas.height;
+      dotCtx.fillStyle = CRT_PALETTE.bg;
+      dotCtx.fillRect(0, 0, w, h);
 
-    function drawDot(x, y, active = true, bright = false) {
-      const dotSize = 1.5;
-      const gap = 2;
-      const px = x * gap + 2;
-      const py = y * gap + 2;
+      dotCtx.strokeStyle = CRT_PALETTE.grid;
+      dotCtx.lineWidth = 1;
 
-      dotCtx.fillStyle = active 
-        ? (bright ? PALETTE.cF6F5F4 : PALETTE.cDDDDED)
-        : '#121216';
-      dotCtx.fillRect(px, py, dotSize, dotSize);
-    }
-
-    function drawChar5x7(char, startX, startY) {
-      const bmp = FONT_5X7[char];
-      if (!bmp) return;
-      for (let r = 0; r < 7; r++) {
-        const row = bmp[r];
-        for (let c = 0; c < 5; c++) {
-          if ((row >> (4 - c)) & 1) {
-            drawDot(startX + c, startY + r, true, true);
-          }
-        }
+      // Draw Grid Lines
+      for (let x = 0; x < w; x += 30) {
+        dotCtx.beginPath();
+        dotCtx.moveTo(x, 0);
+        dotCtx.lineTo(x, h);
+        dotCtx.stroke();
+      }
+      for (let y = 0; y < h; y += 20) {
+        dotCtx.beginPath();
+        dotCtx.moveTo(0, y);
+        dotCtx.lineTo(w, y);
+        dotCtx.stroke();
       }
     }
 
-    function renderUpperMatrix(bassEnergy) {
-      clearDots();
-      seqFrame++;
+    // --- Render Terminal Boot or Oscilloscope ---
+    function renderUpperScreen(timeData) {
+      const w = dotCanvas.width;
+      const h = dotCanvas.height;
 
-      // 1. IBM Terminal Startup Sequence (Slow & Chill)
-      if (seqState === 0) {
-        const line1 = "IBM PC POST";
-        const ramVal = Math.min(640, Math.floor(seqFrame * 6));
-        
-        for (let i = 0; i < line1.length; i++) {
-          drawChar5x7(line1[i], 10 + (i * 6), 6);
-        }
+      if (!isBooted) {
+        bootFrame++;
+        dotCtx.fillStyle = CRT_PALETTE.bg;
+        dotCtx.fillRect(0, 0, w, h);
 
-        // Draw RAM Counter
-        const ramText = ramVal + "K OK";
-        for (let i = 0; i < ramText.length; i++) {
-          drawChar5x7(ramText[i], 10 + (i * 6), 18);
-        }
+        dotCtx.fillStyle = CRT_PALETTE.trace;
+        dotCtx.font = '14px "Courier New", monospace';
+        dotCtx.shadowColor = CRT_PALETTE.trace;
+        dotCtx.shadowBlur = 6;
 
-        if (seqFrame > 140) {
-          seqState = 1;
-          seqFrame = 0;
+        // Terminal text appearing over ~5 seconds (approx 300 frames at 60fps)
+        if (bootFrame > 20) dotCtx.fillText("PETRICHOR AUDIO SYNTHESIZER v1.0", 20, 30);
+        if (bootFrame > 80) dotCtx.fillText("INITIALIZING OSCILLATORS... OK", 20, 55);
+        if (bootFrame > 150) dotCtx.fillText("CALIBRATING CRT PHOSPHOR... OK", 20, 80);
+        if (bootFrame > 220) dotCtx.fillText("SYSTEM READY. OSCILLOSCOPE ACTIVE.", 20, 105);
+
+        dotCtx.shadowBlur = 0;
+
+        if (bootFrame > 300) {
+          isBooted = true;
+          scopeModeElem.textContent = "OSCILL";
         }
-      }
-      
-      // 2. Pioneer Shield
-      else if (seqState === 1) {
-        const text = "PIONEER";
-        for (let i = 0; i < text.length; i++) {
-          drawChar5x7(text[i], 38 + (i * 6), 14);
-        }
-        
-        if (seqFrame > 120) {
-          seqState = 2;
-          seqFrame = 0;
-        }
+        return;
       }
 
-      // 3. Skull & Crossbones
-      else if (seqState === 2) {
-        const brightEyes = bassEnergy > 0.6;
-        for (let r = 0; r < 16; r++) {
-          for (let c = 0; c < 16; c++) {
-            const bit = (SKULL_16X16[r] >> (15 - c)) & 1;
-            if (bit) {
-              const isEye = (r === 4 || r === 5) && (c === 4 || c === 5 || c === 10 || c === 11);
-              drawDot(52 + c, 10 + r, true, isEye && brightEyes);
-            }
-          }
-        }
+      // Live Oscilloscope Waveforms
+      drawScopeGrid();
 
-        if (seqFrame > 140) {
-          seqState = 3; // Permanent Chill Drive
-        }
+      dotCtx.shadowColor = CRT_PALETTE.trace;
+      dotCtx.shadowBlur = 8;
+      dotCtx.strokeStyle = CRT_PALETTE.trace;
+      dotCtx.lineWidth = 2;
+      dotCtx.beginPath();
+
+      const sliceWidth = w / timeData.length;
+      let x = 0;
+
+      for (let i = 0; i < timeData.length; i++) {
+        const v = (timeData[i] / 128.0) * micGain;
+        const y = (v * h) / 2;
+
+        if (i === 0) dotCtx.moveTo(x, y);
+        else dotCtx.lineTo(x, y);
+
+        x += sliceWidth;
       }
 
-      // 4. Chill Night Driving Loop
-      else if (seqState === 3) {
-        driveX += 0.15 + (bassEnergy * 0.15); // Slow, enjoyable scroll speed
-
-        // Skyline
-        for (let x = 0; x < 120; x++) {
-          const skyIndex = Math.floor((x + driveX * 0.3) % SKYLINE.length);
-          const height = SKYLINE[skyIndex];
-          for (let y = 0; y < height; y++) {
-            drawDot(x, 22 - y, true, false);
-          }
-        }
-
-        // Horizon
-        for (let x = 0; x < 120; x++) {
-          drawDot(x, 23, true, true);
-        }
-
-        // Perspective Road Grid
-        for (let y = 24; y < 36; y++) {
-          const rowOffset = (y - 24);
-          const roadWidth = 18 + (rowOffset * 8);
-          const leftX = Math.floor(60 - roadWidth / 2);
-          const rightX = Math.floor(60 + roadWidth / 2);
-
-          drawDot(leftX, y, true, false);
-          drawDot(rightX, y, true, false);
-
-          if (Math.floor(y + driveX) % 5 === 0) {
-            drawDot(60, y, true, true);
-          }
-        }
-      }
+      dotCtx.stroke();
+      dotCtx.shadowBlur = 0;
     }
 
+    // --- Main Render Loop ---
     function draw() {
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-      analyser.getByteFrequencyData(dataArray);
+      // Frequency Data for Bottom Spectrum
+      const freqArray = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(freqArray);
 
-      let bassSum = 0;
-      for (let i = 0; i < 8; i++) bassSum += dataArray[i];
-      const bassEnergy = (bassSum / 8) / 255;
+      // Time Domain Data for Upper Oscilloscope
+      const timeArray = new Uint8Array(analyser.fftSize);
+      analyser.getByteTimeDomainData(timeArray);
 
-      renderUpperMatrix(bassEnergy);
+      renderUpperScreen(timeArray);
 
+      // Render Bottom Spectrum Analyzer
       specCtx.clearRect(0, 0, specCanvas.width, specCanvas.height);
       const w = specCanvas.width;
       const h = specCanvas.height;
+
+      // Draw Grid on Spectrum Background
+      specCtx.strokeStyle = CRT_PALETTE.grid;
+      specCtx.lineWidth = 1;
+      for (let y = 0; y < h; y += 25) {
+        specCtx.beginPath();
+        specCtx.moveTo(0, y);
+        specCtx.lineTo(w, y);
+        specCtx.stroke();
+      }
+
       const barSpacing = w / NUM_BARS;
-      const barWidth = barSpacing * 0.75;
-      const numSegments = 20;
+      const barWidth = barSpacing * 0.72;
+      const numSegments = 22;
       const segHeight = (h - 20) / numSegments;
 
       for (let i = 0; i < NUM_BARS; i++) {
         const fftIdx = frequencyBands[i];
-        let rawVal = (dataArray[fftIdx] / 255) * micGain;
+        let rawVal = (freqArray[fftIdx] / 255) * micGain;
         rawVal = Math.min(1.0, Math.max(0.0, rawVal));
 
         barLevels[i] = rawVal;
@@ -547,22 +482,24 @@
 
           if (s < activeSegs) {
             const ratio = s / numSegments;
-            if (ratio > 0.85) specCtx.fillStyle = PALETTE.c97C27E;
-            else if (ratio > 0.65) specCtx.fillStyle = PALETTE.c88AA6E;
-            else if (ratio > 0.45) specCtx.fillStyle = PALETTE.c5E8054;
-            else if (ratio > 0.25) specCtx.fillStyle = PALETTE.c654FA7;
-            else specCtx.fillStyle = PALETTE.c514088;
+            specCtx.fillStyle = ratio > 0.88 ? CRT_PALETTE.peak : CRT_PALETTE.trace;
+            specCtx.shadowColor = CRT_PALETTE.trace;
+            specCtx.shadowBlur = 4;
           } else {
-            specCtx.fillStyle = '#121216';
+            specCtx.fillStyle = '#05180c';
+            specCtx.shadowBlur = 0;
           }
 
           specCtx.fillRect(x, y + 2, barWidth, segHeight - 3);
         }
 
+        // Peak Indicators
         if (barPeaks[i] > 0.02) {
           const peakSeg = Math.floor(barPeaks[i] * numSegments);
           const peakY = h - (peakSeg + 1) * segHeight;
-          specCtx.fillStyle = PALETTE.cC6C5E3;
+          specCtx.fillStyle = CRT_PALETTE.peak;
+          specCtx.shadowColor = CRT_PALETTE.peak;
+          specCtx.shadowBlur = 6;
           specCtx.fillRect(x, peakY + 2, barWidth, 3);
         }
       }
@@ -574,14 +511,17 @@
 
     document.getElementById('gainLow').addEventListener('click', (e) => {
       micGain = 1.0;
+      document.getElementById('gainVal').textContent = '1.0x';
       setActiveBtn(e.target);
     });
     document.getElementById('gainNorm').addEventListener('click', (e) => {
       micGain = 1.8;
+      document.getElementById('gainVal').textContent = '1.8x';
       setActiveBtn(e.target);
     });
     document.getElementById('gainHigh').addEventListener('click', (e) => {
       micGain = 2.8;
+      document.getElementById('gainVal').textContent = '2.8x';
       setActiveBtn(e.target);
     });
 
